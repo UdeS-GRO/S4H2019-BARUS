@@ -14,6 +14,10 @@
 * limitations under the License.
 *******************************************************************************/
 
+/*tlfdhbfgdkfdkjbfdkljbfdkljb*/
+/*tlfdhbfgdkfdkjbfdkljbfdkljb*/
+/*tlfdhbfgdkfdkjbfdkljbfdkljb*/
+
 /* Authors: Taehun Lim (Darby) */
 
 #include <DynamixelWorkbench.h>
@@ -90,7 +94,7 @@ void setup()
     dxl_wb.goalVelocity(dxl_id, (int32_t)0);
   }
 }
-
+//tsteeeeest
 void loop() 
 {
 
