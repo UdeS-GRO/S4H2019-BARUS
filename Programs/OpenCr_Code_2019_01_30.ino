@@ -25,9 +25,24 @@
 #define MOTOR_ID_2    2
 #define MOTOR_ID_3    3
 
-DynamixelWorkbench motor1;
+/* Creation of motor object */
+
+DynamixelWorkbench motor1;  
 DynamixelWorkbench motor2;
 DynamixelWorkbench motor3;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Function Name		:initJointMode() 
+//Parameters		  : &motor (DynamixelWorkbench) - Address of the motor object to initiate in jointMode
+//                  motor_ID (uint8_t) - ID of the motor passed in parameter
+//                  model_number (uint16_t) - Model Number of the motor passed in parameter
+//                  velocity (int32_t) - Profile of velocity to set according to Dynamixel Workbench function jointMode()
+//                  acceleration (int32_t) - Profile of acceleration to set according to Dynamixel Workbench function jointMode() 
+//Return		      : nothing
+//
+//Description		  : This function initiate a DynamixelWorkbench object with the device board and the BAUDRATE. It also 
+//                  place the object in Joint Mode instead of Wheel Mode.  
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void initJointMode(DynamixelWorkbench &motor, uint8_t motor_ID , uint16_t model_number, int32_t velocity, int32_t acceleration){
   const char *log;
