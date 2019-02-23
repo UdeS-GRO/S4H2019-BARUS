@@ -1,0 +1,46 @@
+# Author: 		Alexandre D
+# Date of creation: 	2019/02/23
+# This setup comes from : 	https://github.com/FRC4564/Xbox
+#				https://tutorials-raspberrypi.com/raspberry-pi-xbox-360-controller-wireless/
+
+# Installation procedure for Xbox librairy on Raspberry pi 
+# usefull for using xbox controller (wireless or not) 
+
+-1:	Make sure that your Rasberry pi has access to internet
+
+-2:	Open command/terminal window
+
+-3: 	Update apt-get update
+	TYPE: "sudo apt-get update"
+	
+-4:	Download module
+	TYPE: "sudo apt-get install xboxdrv"
+
+-5:  	Connect Xbox controller wireless adaptor
+	INFO: Can be done at the beginning
+
+-6:	Check if the adaptator is found by RPI(Raspberry pi)
+	TYPE: "lsusb"
+
+-7:	Connect controller
+
+-8:	Run the controller program
+	TYPE: "sudo xboxdrv --detach-kernel-driver"
+
+	INFO: Playing with the controller should show the status of each button
+
+-----------------------------------------------------------------------------------------------------
+See other steps  and details at git clone->  https://github.com/FRC4564/Xbox or Continue this file
+-----------------------------------------------------------------------------------------------------
+
+-9: 	Downlaod module
+	TYPE: "wget https://raw.githubusercontent.com/FRC4564/Xbox/master/xbox.py"
+	TYPE: "wget https://raw.githubusercontent.com/FRC4564/Xbox/master/sample.py"
+
+-10: 	Make sure that those file are in the same folder then the script using it
+
+-11: 	Follow the git clone described over for an example.
+
+
+!!! Use "sudo apt-get install xboxdrv" whenever the controller is disconnected even if it doesn't look like it !!!
+!!! If it still doesn't work, rebooting the controller usually works for me !!!
