@@ -5,53 +5,75 @@
 
 
 
-Motor::Motor(uint32_t Baudrate, const char* DeviceName, uint8_t motorID , uint16_t modelNumber, int32_t velocity, int32_t acceleration){
+Motor::Motor(uint32_t Baudrate, const char* DeviceName, uint8_t ID , uint16_t modelNumber){
 
-  bool isOk;
-  
   model_number = modelNumber;
-  motor_ID = motorID;
+  motorID = ID;
   baudrate = Baudrate;
   deviceName = DeviceName;
-  isOk = initJointMode(velocity, acceleration);
-
+  
+  motor.init(deviceName, baudrate);
+  motor.ping(motorID, &model_number);
 }
 
 
-bool Motor::initJointMode(int32_t velocity, int32_t acceleration){
-  const char *log;
-  bool result = false;
-  
-  result = motor.init(deviceName, baudrate, &log);
-  result = motor.ping(motor_ID, &model_number, &log);
-  result = motor.jointMode(motor_ID, velocity, acceleration, &log);
+bool Motor::initJointMode(){
+  return motor.jointMode(motorID);
+}
 
-  return result;
+bool Motor::initWheelMode(){
+  return motor.wheelMode(motorID);
+}
+
+void Motor::homing()
+{
+  initJointMode();
+  motor.goalPosition(motorID, homePosition);
+  delay(500);
 }
 
 void Motor::motorTurnLeft(int32_t goalPosition )
 {
-  const char *log;
   bool result = false;
-  result = motor.setNormalDirection(motor_ID, &log);
-  motor.goalPosition(motor_ID, goalPosition);
+  result = motor.setReverseDirection(motorID);
+  motor.goalPosition(motorID, goalPosition);
 }
 
 
 void Motor::motorTurnRight(int32_t goalPosition)
 {
-  const char *log;
   bool result = false;
-  result = motor.setReverseDirection(motor_ID, &log);
-  motor.goalPosition(motor_ID, goalPosition);
+  result = motor.setNormalDirection(motorID);
+  motor.goalPosition(motorID, goalPosition);
+}
+
+
+bool Motor::rotate(float rotSpeed){
+  bool isOk = false;
+  float velocity = MAX_SPEED;
+  
+  motor.torqueOff(motorID);
+  do
+  {
+    motor.getVelocity(motorID, &velocity);
+  }
+  while(velocity > 0.1 || velocity < -0.1);
+  
+  motor.torqueOn(motorID);
+  if(rotSpeed >= -MAX_SPEED && rotSpeed <= MAX_SPEED)
+  {
+    motor.goalVelocity(motorID, rotSpeed);
+    isOk = true;
+  }
+  return isOk;
 }
 
 int32_t Motor::getCurrentPosition(uint8_t motorID)
 {
-  const char *log;
+
   bool isRead = false;
   int32_t pos;
-  isRead = motor.getPresentPositionData(motorID, &pos, &log);
+  isRead = motor.getPresentPositionData(motorID, &pos);
   if(!isRead)
   {
     return -1;
@@ -61,10 +83,9 @@ int32_t Motor::getCurrentPosition(uint8_t motorID)
 
 float Motor::getCurrentRadianPos(uint8_t motorID)
 {
-  const char *log;
   bool isRead = false;
   float pos;
-  isRead = motor.getRadian(motorID, &pos, &log);
+  isRead = motor.getRadian(motorID, &pos);
   if(!isRead)
   {
     return -1;
@@ -72,24 +93,14 @@ float Motor::getCurrentRadianPos(uint8_t motorID)
   return pos; 
 }
 
-// Function for reading strings from Raspberry Pi
-/*int Motor::read_Int() 
-{
-  int Byte1 = 0;
-  int Byte2 = 0;
-  if(Serial.available() > 0)
+bool Motor::setHomePos(int pos){
+  bool isOk = false;
+  if(int32_t(pos) >= MIN_POSITION && int32_t(pos) <= MAX_POSITION )
   {
-    Byte1 = Serial.read();
-    Byte2 = Serial.read(); 
-    return ((Byte1<<8) + Byte2);  
+    homePosition = int32_t(pos);
+    isOk = true; 
   }
-  return -1; 
-}*/
+  return isOk;  
+}
 
-// Function for sending a string to RaspberryPi
-/*void Motor::writeIntToRpi(int msg) 
-{ 
- Serial.write(lowByte(msg));
- Serial.write(highByte(msg));
- 
-}*/
+int32_t Motor::getHomePos(){ return homePosition; }

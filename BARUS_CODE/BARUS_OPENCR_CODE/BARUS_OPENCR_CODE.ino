@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Program Name		  : InitiateMotor.py
+//File Name		      : BARUS_OPENCR_CODE
 //Date of creation	: 2019/01/30
 //Creator		        : BARUS team members - Olivier Girouard, Alexandre Demers
 //
@@ -20,6 +20,9 @@
 #define MOTOR_ID_2    2
 #define MOTOR_ID_3    3
 #define SERVOPIN      3
+
+#define MIN_POSITION 5
+#define MAX_POSTITON 4085
 
 #define HOME_POSITION_MOTOR1 5
 #define HOME_POSITION_MOTOR2 5
@@ -63,18 +66,23 @@ void setup()
 {
   Serial.begin(57600);
   
-  motor3 = new Motor(baudrate, deviceName, motorId_3 , motorModel_3, 0, 0);
-  motor2 = new Motor(baudrate, deviceName, motorId_2 , motorModel_2, 0, 0);
-  motor1 = new Motor(baudrate, deviceName, motorId_1 , motorModel_1, 0, 0);
-  delay(2000);
+  motor3 = new Motor(baudrate, deviceName, motorId_3 , motorModel_3);
+  motor2 = new Motor(baudrate, deviceName, motorId_2 , motorModel_2);
+  motor1 = new Motor(baudrate, deviceName, motorId_1 , motorModel_1);
 
-  
+  motor1->initWheelMode();
+  motor2->initWheelMode();
+  motor3->initWheelMode();
+
 //---- Homming ----//
-  motor1->motorTurnLeft(homePositionMotor1);
-  motor2->motorTurnLeft(homePositionMotor2);
-  motor3->motorTurnLeft(homePositionMotor3);
-  delay(2000);   
   
+  motor1->setHomePos();
+  motor2->setHomePos();
+  motor3->setHomePos();
+  motor1->homing();
+  motor2->homing();
+  motor3->homing();
+
 /*
   //gripperServo.attach(servoPin);
   gripperServo.write(90);//angle in degrees
@@ -89,7 +97,6 @@ void loop()
 //---- Check communication RPI-OPENCR  ----//
   checkBegin(&communicationIsOk);
 
-  const char *log;
   int test = -1;
   test = read_Int();
   //writeIntToRpi(test);
@@ -98,26 +105,31 @@ void loop()
     switch(test/10000)
     {
       case 0:
-        motor3->motor.torqueOff(motor3->motor_ID, &log);
+        motor3->motor.torqueOff(motor3->motorID);
         isRolling = false;
         break;
       
       case 1:
         motor1->motorTurnLeft(test%10000);
         delay(500);
-        writeIntToRpi(motor1->getCurrentPosition(motor1->motor_ID));
+        writeIntToRpi(motor1->getCurrentPosition(motor1->motorID));
         break;
         
       case 2:
         motor2->motorTurnLeft(test%10000);
         delay(500);
-        writeIntToRpi(motor2->getCurrentPosition(motor2->motor_ID));
+        writeIntToRpi(motor2->getCurrentPosition(motor2->motorID));
         break;
         
       case 3:
-        if (!isRolling){
-          motor3->motor.wheelMode(motor3->motor_ID, 0, &log);
-          motor3->motor.goalVelocity(motor3->motor_ID, float(5.0), &log);
+        if(!isRolling){
+          motor3->initWheelMode();
+          if(test%10000 == 1){
+            motor3->rotate(5.0);
+          }
+          else if(test%10000 == 0){
+            motor3->rotate(-5.0);
+          }
           isRolling = true;
         }
         break;
@@ -125,7 +137,7 @@ void loop()
       case 4:
         motor3->motorTurnLeft(test%10000);
         delay(500);
-        writeIntToRpi(motor3->getCurrentPosition(motor3->motor_ID));
+        writeIntToRpi(motor3->getCurrentPosition(motor3->motorID));
         break;    
     }
   }

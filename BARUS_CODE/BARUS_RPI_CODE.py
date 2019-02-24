@@ -3,7 +3,7 @@ import serial
 import struct
 import time
 
-ser = serial.Serial('/dev/ttyACM1', 57600)
+ser = serial.Serial('/dev/ttyACM0', 57600)
 
 
 def sendIntToArduino(msg):
@@ -64,12 +64,15 @@ joy = xbox.Joystick()
 chekBegin(beginSignal)
 
 while not joy.X():
-    if joy.A():
-        sendIntToArduino(30000)
+    if joy.A() and not joy.Y():
+        sendIntToArduino(30001)
         print("A pressed")
+    elif not joy.A() and joy.Y():
+        sendIntToArduino(30000)
+        print("Y pressed")
     else:
         sendIntToArduino(0)
-        print("A released")
+        print("A/Y released")
     time.sleep(0.1)
 
 print("X pressed")
