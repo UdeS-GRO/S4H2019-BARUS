@@ -69,7 +69,7 @@ bool isRolling = false;
 void setup() 
 {
   Serial.begin(57600);
-/*  
+  
 //---- Gripper setup ----//
 
   gripperServo.attach(servoPin);
@@ -96,58 +96,46 @@ void setup()
 
   gripperServo.write(gripperOpenedAngle);
   gripperIsOpen = true;
- */  
+   
 }
 
 void loop()
 {
- /*
+ 
 //---- Check communication RPI-OPENCR  ----//
   checkBegin(&communicationIsOk);
 
   int test = -1;
   test = read_Int();
-  //writeIntToRpi(test);
 
   if(signalIsValid(test)){
     switch(test/10000)
     {
       case 0:
-        motor3->motor.torqueOff(motor3->motorID);
-        isRolling = false;
+        if(!gripperIsOpen && test%10000 == 1){
+           gripperServo.write(gripperOpenedAngle);//angle in degrees
+           gripperIsOpen = true;
+        }
+        else if(gripperIsOpen && test%10000 == 0){
+           gripperServo.write(gripperClosedAngle);
+           gripperIsOpen = false;
+        }
         break;
       
       case 1:
         motor1->motorTurnLeft(test%10000);
         delay(500);
-        writeIntToRpi(motor1->getCurrentPosition(motor1->motorID));
         break;
         
       case 2:
         motor2->motorTurnLeft(test%10000);
         delay(500);
-        writeIntToRpi(motor2->getCurrentPosition(motor2->motorID));
         break;
         
       case 3:
-        if(!isRolling){
-          motor3->initWheelMode();
-          if(test%10000 == 1){
-            motor3->rotate(5.0);
-          }
-          else if(test%10000 == 0){
-            motor3->rotate(-5.0);
-          }
-          isRolling = true;
-        }
-        break;
-
-      case 4:
         motor3->motorTurnLeft(test%10000);
         delay(500);
-        writeIntToRpi(motor3->getCurrentPosition(motor3->motorID));
-        break;    
+        break;  
     }
   }
-  */
 }
