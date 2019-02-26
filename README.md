@@ -1,5 +1,6 @@
 # BARUS
 Barman Robotisé Révolutionnaire de l'Université de Sherbrooke
+
 To join this projet on waffle.io: https://waffle.io/thec2511/BARUS/join
 
 Welcome to Barus!
