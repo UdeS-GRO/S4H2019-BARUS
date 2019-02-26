@@ -32,13 +32,19 @@ Library used for the OpenCR board (to use Dynamixel Motors):
 
 More information on the OpenCR board: http://emanual.robotis.com/docs/en/parts/controller/opencr10/#examples  
 
-Content of the directory "Barus Code":
+Content of the project:
 
 * Barus_Open_Code: 
 
    This code is for the OpenCR board.
    
-   It is divided in 4 parts. firstly, there is the "Function.h" file which contains our class for serial communication. then, the "motor.h" file is a class to control the Dynamixel motors. Also, ".cpp" file contains the function definitions and the ".ino" file contains the main code of the OpenCR board.
+   function.h: Contains our class for serial communication; 
+   
+   motor.h: contains a class to control the Dynamixel motors; 
+   
+   ".cpp" file: contains the function definitions;
+   
+   ".ino" file: contains the main code of the OpenCR board.
 
 * Barus_Rpi_Code:
 
