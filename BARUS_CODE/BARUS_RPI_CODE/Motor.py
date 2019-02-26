@@ -1,10 +1,12 @@
 import SerialCom
 
 
+#def moveMotor(motorId, position):
+    #msg = 10000 * motorId + position
+    #SerialCom.sendIntToArduino(msg)
+    
 def moveMotor(motorId, position):
-    msg = 10000 * motorId + position
-    SerialCom.sendIntToArduino(msg)
-
+    SerialCom.sendIntToArduino(motorId, position)
 
 def readMotorPosition(motorId):
     SerialCom.sendIntToArduino(50000 + motorId)
