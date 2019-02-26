@@ -6,5 +6,5 @@ This code is for the OpenCR board.
    
    ".cpp" file: contains the function definitions;
    
-   ".ino" file: contains the main code of the OpenCR board.
+   ".ino" file: contains the main code of the OpenCR board. 
 
