@@ -34,6 +34,13 @@ More information on the OpenCR board: http://emanual.robotis.com/docs/en/parts/c
 
 Content of the directory "Barus Code":
 
-* OpenCR code to control the motors: 
+* Barus_Open_Code: 
 
-   this code is divided in three parts. firstly, there is the ".h" file which contains our classes. then, the ".cpp" file contains the function     definitions and the "" file contains the main code.
+   this code is divided in 4 parts. firstly, there is the "Function.h" file which contains our class for serial communication. then, the "motor.h" file is a class to control the Dynamixel motors. Also, ".cpp" file contains the function definitions and the ".ino" file contains the main code of the OpenCR board.
+
+* Barus_Rpi_Code:
+
+   This code is for the RaspberryPi. It is used to send commands to the OpenCR board.
+   
+* 
+
