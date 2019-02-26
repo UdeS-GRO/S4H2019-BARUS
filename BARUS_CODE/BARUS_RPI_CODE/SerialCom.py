@@ -11,7 +11,7 @@ def sendIntToArduino(msg):
 
 # test ######
 def sendStructToArduino(nb1, nb2):
-    ser.write(struct.pack('hh', nb1, nb2))
+    ser.write(struct.pack('>hh', nb1, nb2))
 
 
 def readStructFromToArduino():
