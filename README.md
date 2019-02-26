@@ -25,3 +25,7 @@ Software:
 * Arduino.ide
 * Matlab (to model the robot mathematically)
 * QT
+
+Library used for the OpenCR board (to use Dynamixel Motors):
+
+* DynamixelWorkbench: http://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_workbench/#opencr-and-opencm-tutorials   
