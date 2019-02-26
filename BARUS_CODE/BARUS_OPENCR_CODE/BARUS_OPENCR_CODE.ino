@@ -58,6 +58,8 @@ uint16_t motorModel_3 = 0;
 //---- Other Declaration ----//
 
 bool communicationIsOk = false;
+int cmd[0,0] = {0,0};
+int *ptrCmd = cmd;
 
 
 int32_t homePositionMotor1 = HOME_POSITION_MOTOR1;
@@ -101,6 +103,7 @@ void setup()
 
 void loop()
 {
+
  /*
 //---- Check communication RPI-OPENCR  ----//
   checkBegin(&communicationIsOk);

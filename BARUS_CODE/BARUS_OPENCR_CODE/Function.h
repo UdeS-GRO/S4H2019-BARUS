@@ -6,15 +6,23 @@
 #include <Servo.h>
 
 // Function for reading strings from Raspberry Pi
-int read_Int() 
+int read_Int(int *ptr) 
 {
   int Byte1 = 0;
   int Byte2 = 0;
+  int Byte3 = 0;
+  int Byte4 = 0;
   if(Serial.available() > 0)
   {
     Byte1 = Serial.read();
     Byte2 = Serial.read(); 
-    return ((Byte1<<8) + Byte2);  
+    Byte3 = Serial.read();
+    Byte4 = Serial.read();
+    *ptr = ((Byte1<<8) + Byte2);
+    *(ptr+1) = ((Byte3<<8)+Byte4);
+
+    return 1; 
+     
   }
   return -1; 
 }
