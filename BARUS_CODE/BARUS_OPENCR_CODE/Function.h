@@ -5,6 +5,9 @@
 #include <DynamixelWorkbench.h>
 #include <Servo.h>
 
+int cmd[2] = {0,0};
+int *ptrCmd = cmd;
+
 // Function for reading strings from Raspberry Pi
 int read_Int(int *ptr) 
 {
@@ -35,12 +38,13 @@ void writeIntToRpi(int msg)
   Serial.write(highByte(msg));
 }
 
-void checkBegin(bool* ptrIsBegin)
+void checkBegin(bool* ptrIsBegin, int* ptrCmd)
 {
   int beginSignal = 420;
   while(!(*ptrIsBegin))
   {
-    if(read_Int() == beginSignal)  
+    read_Int(ptrCmd);
+    if(cmd[0] == beginSignal)  
     {
       *ptrIsBegin = true;
       writeIntToRpi(beginSignal);

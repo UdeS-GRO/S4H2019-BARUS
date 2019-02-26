@@ -58,6 +58,8 @@ uint16_t motorModel_3 = 0;
 //---- Other Declaration ----//
 
 bool communicationIsOk = false;
+//int cmd[2] = {0,0};
+//int *ptrCmd = cmd;
 
 
 int32_t homePositionMotor1 = HOME_POSITION_MOTOR1;
@@ -103,39 +105,38 @@ void loop()
 {
  
 //---- Check communication RPI-OPENCR  ----//
-  checkBegin(&communicationIsOk);
+  checkBegin(&communicationIsOk,ptrCmd);
 
-  int test = -1;
-  test = read_Int();
+  //int test = -1;
+  //test = read_Int();
 
-  if(signalIsValid(test)){
-    switch(test/10000)
+  read_Int(ptrCmd);
+  switch(cmd[0])
     {
       case 0:
-        if(!gripperIsOpen && test%10000 == 1){
+        if(!gripperIsOpen && cmd[1] == 1){
            gripperServo.write(gripperOpenedAngle);//angle in degrees
            gripperIsOpen = true;
         }
-        else if(gripperIsOpen && test%10000 == 0){
+        else if(gripperIsOpen && cmd[1] == 0){
            gripperServo.write(gripperClosedAngle);
            gripperIsOpen = false;
         }
         break;
       
       case 1:
-        motor1->motorTurnLeft(test%10000);
+        motor1->motorTurnLeft(cmd[1]);
         delay(500);
         break;
         
       case 2:
-        motor2->motorTurnLeft(test%10000);
+        motor2->motorTurnLeft(cmd[1]);
         delay(500);
         break;
         
       case 3:
-        motor3->motorTurnLeft(test%10000);
+        motor3->motorTurnLeft(cmd[1]);
         delay(500);
         break;  
     }
-  }
 }

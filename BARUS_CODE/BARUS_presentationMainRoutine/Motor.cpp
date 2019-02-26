@@ -18,7 +18,7 @@ Motor::Motor(uint32_t Baudrate, const char* DeviceName, uint8_t ID , uint16_t mo
 
 
 bool Motor::initJointMode(){
-  return motor.jointMode(motorID,  int32_t(100));
+  return motor.jointMode(motorID);
 }
 
 bool Motor::initWheelMode(){
