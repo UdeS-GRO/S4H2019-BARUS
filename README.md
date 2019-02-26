@@ -34,7 +34,7 @@ More information on the OpenCR board: http://emanual.robotis.com/docs/en/parts/c
 
 Content of the project:
 
-* Barus_Open_Code: 
+* Barus_OpenCR_Code: 
 
    This code is for the OpenCR board.
 
