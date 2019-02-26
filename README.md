@@ -53,4 +53,6 @@ Content of the project:
 * CAD:
 
    This file contains all robot parts developed in SolidWorks.
+   
+Note: This project is in development and content is likely to change frequently.
 
