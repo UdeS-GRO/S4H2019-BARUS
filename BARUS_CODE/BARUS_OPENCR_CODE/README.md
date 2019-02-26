@@ -1,4 +1,4 @@
-This code is for the OpenCR board.
+These files are for the OpenCR board.
    
    function.h: Contains our class for serial communication; 
    
