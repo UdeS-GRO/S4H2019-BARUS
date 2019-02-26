@@ -37,14 +37,6 @@ Content of the project:
 * Barus_Open_Code: 
 
    This code is for the OpenCR board.
-   
-   function.h: Contains our class for serial communication; 
-   
-   motor.h: contains a class to control the Dynamixel motors; 
-   
-   ".cpp" file: contains the function definitions;
-   
-   ".ino" file: contains the main code of the OpenCR board.
 
 * Barus_Rpi_Code:
 
@@ -53,6 +45,7 @@ Content of the project:
 * CAD:
 
    This file contains all robot parts developed in SolidWorks.
+   
    
 Note: This project is in development and content is likely to change frequently.
 
