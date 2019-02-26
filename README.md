@@ -29,3 +29,11 @@ Software:
 Library used for the OpenCR board (to use Dynamixel Motors):
 
 * DynamixelWorkbench: http://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_workbench/#opencr-and-opencm-tutorials   
+
+More information on the OpenCR board: http://emanual.robotis.com/docs/en/parts/controller/opencr10/#examples  
+
+Content of the directory "Barus Code":
+
+* OpenCR code to control the motors: 
+
+   this code is divided in three parts. firstly, there is the ".h" file which contains our classes. then, the ".cpp" file contains the function     definitions and the "" file contains the main code.
