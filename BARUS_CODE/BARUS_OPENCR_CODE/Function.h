@@ -5,32 +5,36 @@
 #include <DynamixelWorkbench.h>
 #include <Servo.h>
 
-int cmd[2] = {0,0};
-int *ptrCmd = cmd;
+#define READY_SIGNAL 420 
+#define COMMUNICATION_SIGNAL 420 
+#define GRIPPER_OPEN_ANGLE 85
+#define GRIPPER_CLOSE_ANGLE 30
 
-// Function for reading strings from Raspberry Pi
-int read_Int(int *ptr) 
-{
-  int Byte1 = 0;
-  int Byte2 = 0;
-  int Byte3 = 0;
-  int Byte4 = 0;
-  if(Serial.available() > 0)
-  {
-    Byte1 = Serial.read();
-    Byte2 = Serial.read(); 
-    Byte3 = Serial.read();
-    Byte4 = Serial.read();
-    *ptr = ((Byte1<<8) + Byte2);
-    *(ptr+1) = ((Byte3<<8)+Byte4);
+enum Function{
+  GRIPPER = 1,
+  MOTOR_1_WHEEL,
+  MOTOR_2_WHEEL,
+  MOTOR_1_JOINT,
+  MOTOR_2_JOINT,
+  MOTOR_1_READ_POS,
+  MOTOR_2_READ_POS,
+  HOME,
+  NOTHING
+  };
 
-    return 1; 
-     
-  }
-  return -1; 
+typedef struct Input{
+  
+  int function = 0;
+  int parameter = 0;
+  
+};
+
+void openGripper(Servo* gripperServo){
+  gripperServo->write(GRIPPER_OPEN_ANGLE);  
 }
-
-// Function for sending a string to RaspberryPi
+void closeGripper(Servo* gripperServo){
+  gripperServo->write(GRIPPER_CLOSE_ANGLE);  
+}
 
 void writeIntToRpi(int msg) 
 { 
@@ -38,30 +42,80 @@ void writeIntToRpi(int msg)
   Serial.write(highByte(msg));
 }
 
-void checkBegin(bool* ptrIsBegin, int* ptrCmd)
+void emptySerialPort()
 {
-  int beginSignal = 420;
+  while(Serial.available() > 0)
+  {
+    Serial.read();  
+  }
+}
+
+void signalReadyToRead()
+{
+  writeIntToRpi(READY_SIGNAL); 
+}
+
+bool readCommandFromRPI(struct Input* command) 
+{
+  int Byte1 = 0;
+  int Byte2 = 0;
+  int Byte3 = 0;
+  int Byte4 = 0;
+  bool isOk = false;
+
+  if(Serial.available() > 0)
+  {
+    Byte1 = Serial.read();
+    Byte2 = Serial.read(); 
+    Byte3 = Serial.read();
+    Byte4 = Serial.read();
+    command->function = ((Byte1<<8) + Byte2);
+    command->parameter = ((Byte3<<8)+Byte4);
+    isOk = true;
+    
+  }
+  //emptySerialPort();
+  //signalReadyToRead();
+  
+  return isOk; 
+}
+
+int readIntFromRPI() 
+{
+  int Byte1 = 0;
+  int Byte2 = 0;
+  if(Serial.available() > 0)
+  {
+    Byte1 = Serial.read();
+    Byte2 = Serial.read(); 
+    return ((Byte1<<8) + Byte2);  
+  }
+  return -1; 
+}
+
+void checkBegin(bool* ptrIsBegin)
+{
+  int signalToBegin = 0;
   while(!(*ptrIsBegin))
   {
-    read_Int(ptrCmd);
-    if(cmd[0] == beginSignal)  
+    signalToBegin = readIntFromRPI();
+    if(signalToBegin == COMMUNICATION_SIGNAL)  
     {
       *ptrIsBegin = true;
-      writeIntToRpi(beginSignal);
+      writeIntToRpi(COMMUNICATION_SIGNAL);
     }
   }
 }
 
-bool signalIsValid(int inputSignal)
-{
-  bool isOk = false;
 
-  if(inputSignal >= 0 && inputSignal <=80000)
-  {
-    isOk = true;
-  }
 
-  return isOk;  
- }
 
+
+
+
+
+
+
+
+ 
 #endif

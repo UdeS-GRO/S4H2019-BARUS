@@ -1,20 +1,14 @@
 import SerialCom
 
-gripperSignal = 0
+gripperFunctionNB = 1
 openSignal = 1
-closeSignal = 0
+closeSignal = 2
 
 
-#def openGripper():
-    #msg = 10000 * gripperSignal + openSignal
-    #SerialCom.sendIntToArduino(msg)
-#def closeGripper():
-    #msg = 10000 * gripperSignal + closeSignal
-    #SerialCom.sendIntToArduino(msg)
 def closeGripper():
-    SerialCom.sendStructToArduino(gripperSignal, closeSignal)
+    SerialCom.sendStructToArduino(gripperFunctionNB, closeSignal)
+
+
 def openGripper():
-    SerialCom.sendStructToArduino(gripperSignal, openSignal)
-
-
+    SerialCom.sendStructToArduino(gripperFunctionNB, openSignal)
 

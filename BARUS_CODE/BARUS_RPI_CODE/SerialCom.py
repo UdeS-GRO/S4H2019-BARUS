@@ -1,8 +1,9 @@
 import serial
 import struct
 import time
+import serial
 
-ser = serial.Serial('/dev/ttyACM0', 57600)
+ser = serial.Serial('/dev/ttyACM2', 57600)
 
 
 def sendIntToArduino(msg):
@@ -46,4 +47,10 @@ def chekBegin(beginSignal):
             print("Signal to begin received")
             isOk = True
     return isOk
+
+###main test
+# test = 4
+# sendStructToArduino(test)
+# time.sleep(5)
+
 

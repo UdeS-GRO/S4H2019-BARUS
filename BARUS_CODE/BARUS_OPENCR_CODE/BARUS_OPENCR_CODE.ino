@@ -38,10 +38,6 @@ const char* deviceName = DEVICE_NAME;
 Servo gripperServo;
 int servoPin = SERVOPIN;
 
-int gripperOpenedAngle = 90;
-int gripperClosedAngle = 30;
-bool gripperIsOpen;
-
 Motor* motor3;
 Motor* motor2;
 Motor* motor1;
@@ -58,99 +54,124 @@ uint16_t motorModel_3 = 0;
 //---- Other Declaration ----//
 
 bool communicationIsOk = false;
-int cmd[0,0] = {0,0};
-int *ptrCmd = cmd;
-
 
 int32_t homePositionMotor1 = HOME_POSITION_MOTOR1;
 int32_t homePositionMotor2 = HOME_POSITION_MOTOR2;
 int32_t homePositionMotor3 = HOME_POSITION_MOTOR3;
 
-bool isRolling = false;
+int precisionTolerence = 10;
 
 void setup() 
 {
   Serial.begin(57600);
-/*  
+ 
 //---- Gripper setup ----//
 
   gripperServo.attach(servoPin);
 
 //---- Gripper setup ----//
-
-  motor3 = new Motor(baudrate, deviceName, motorId_3 , motorModel_3);
-  motor2 = new Motor(baudrate, deviceName, motorId_2 , motorModel_2);
+  
   motor1 = new Motor(baudrate, deviceName, motorId_1 , motorModel_1);
-
+  motor2 = new Motor(baudrate, deviceName, motorId_2 , motorModel_2);
   motor1->initJointMode();
   motor2->initJointMode();
-  motor3->initJointMode();
-
 //---- Homming ----//
   
   motor1->setHomePos();
   motor2->setHomePos();
-  motor3->setHomePos();
+
   motor1->homing();
   motor2->homing();
-  motor3->homing();
-  delay(1000);
 
-  gripperServo.write(gripperOpenedAngle);
-  gripperIsOpen = true;
- */  
+  delay(1000);
+  
+  openGripper(&gripperServo);
+
 }
 
 void loop()
 {
 
- /*
+ 
 //---- Check communication RPI-OPENCR  ----//
   checkBegin(&communicationIsOk);
 
-  int test = -1;
-  test = read_Int();
-  //writeIntToRpi(test);
+  struct Input inputCommand;
+  if(readCommandFromRPI(&inputCommand)){
 
-  if(signalIsValid(test)){
-    switch(test/10000)
+
+    
+    switch(inputCommand.function)
     {
-      case 0:
-        motor3->motor.torqueOff(motor3->motorID);
-        isRolling = false;
-        break;
-      
-      case 1:
-        motor1->motorTurnLeft(test%10000);
-        delay(500);
-        writeIntToRpi(motor1->getCurrentPosition(motor1->motorID));
-        break;
-        
-      case 2:
-        motor2->motorTurnLeft(test%10000);
-        delay(500);
-        writeIntToRpi(motor2->getCurrentPosition(motor2->motorID));
-        break;
-        
-      case 3:
-        if(!isRolling){
-          motor3->initWheelMode();
-          if(test%10000 == 1){
-            motor3->rotate(5.0);
-          }
-          else if(test%10000 == 0){
-            motor3->rotate(-5.0);
-          }
-          isRolling = true;
+      case GRIPPER:
+        if(inputCommand.parameter == 1){
+          openGripper(&gripperServo);
+        }
+        else if(inputCommand.parameter == 2){
+          closeGripper(&gripperServo);
         }
         break;
-
-      case 4:
-        motor3->motorTurnLeft(test%10000);
-        delay(500);
-        writeIntToRpi(motor3->getCurrentPosition(motor3->motorID));
-        break;    
+        
+      case MOTOR_1_WHEEL:
+        if(!(motor1->isRollingLeft) && inputCommand.parameter == 1){
+          motor1->rotate(5.0);
+        }
+        else if(!(motor1->isRollingRight) && inputCommand.parameter == 2){
+          motor1->rotate(-5.0);
+        }
+        else{
+          motor1->rotate(0.0);
+        }
+        break;
+      
+      case MOTOR_2_WHEEL:
+        if(!(motor2->isRollingLeft) && inputCommand.parameter == 1){
+          motor2->rotate(3.0);
+        }
+        else if(!(motor2->isRollingRight) && inputCommand.parameter == 2){
+          motor2->rotate(-3.0);
+        }
+        else{
+          motor2->rotate(0.0);
+        }
+        break;
+      
+      case MOTOR_1_JOINT:
+        motor1->turnToPos(int32_t(inputCommand.parameter));
+        while(motor1->getCurrentPosition() >= inputCommand.parameter+precisionTolerence || motor1->getCurrentPosition() <= inputCommand.parameter-precisionTolerence)
+        {}
+        break;
+      
+      case MOTOR_2_JOINT:
+        motor2->turnToPos(int32_t(inputCommand.parameter));
+        while(motor2->getCurrentPosition() >= inputCommand.parameter+precisionTolerence || motor2->getCurrentPosition() <= inputCommand.parameter-precisionTolerence)
+        {}
+        break;
+      
+      case MOTOR_1_READ_POS:
+        writeIntToRpi(motor1->getCurrentPosition());
+        break;
+      
+      case MOTOR_2_READ_POS:
+        writeIntToRpi(motor2->getCurrentPosition());
+        break;
+        
+      case HOME:
+        motor1->homing();
+        motor2->homing();
+        break;
+        
+      /*case 10:
+        
+        motor2->turnToPos(int32_t(inputCommand.parameter));
+        delay(1000);
+        break;
+        
+      default:
+        motor2->turnToPos(int32_t(2000));
+        delay(1000);
+        break;*/
     }
   }
-  */
+  //delay(2000);
 }
