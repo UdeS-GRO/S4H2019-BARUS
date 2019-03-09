@@ -1,86 +1,41 @@
 import xbox
-import serial
-import struct
 import time
-
-ser = serial.Serial('/dev/ttyACM0', 57600)
-
-
-def sendIntToArduino(msg):
-    ser.write(struct.pack('>h', msg))
-
-
-def sendStrToArduino(msg):
-    ser.write(msg.encode('utf-8'))
+import SerialCom
+import Motor
+import Gripper
+import Constant
+import PositionFileManager
 
 
-def receiveIntFromArduino():
-    msg1 = ser.read(2)
-    val = struct.unpack('<h', msg1)
-    return val[0]
+#Main start here
+
+CommunicationIsOk = False
 
 
-def chekBegin(beginSignal):
-    echo = -1
+dict = PositionFileManager.initPositionDictionary(Constant.POS_FILE_PATH)
 
-    sendIntToArduino(beginSignal)
-    print("Signal to begin sended")
+#Establish communication with OPENCR
+print("Establish communication with OPENCR...")
+if not CommunicationIsOk:
+    SerialCom.chekBegin(Constant.BEGIN_SIGNAL)
+print("Communication...Ready")
 
-    while echo != beginSignal:
-        echo = receiveIntFromArduino()
+position = Motor.readMotorPosition()
 
-        if echo == beginSignal:
-            print("Signal to begin received")
-            print(echo)
+print(position[0])
+print(position[1])
 
+PositionFileManager.saveNewPosition("INIT", position[0], position[1], dict , path)
 
-def moveMotor(motorId, position):
-    msg = 10000 * motorId + position
-    sendIntToArduino(msg)
-    print(msg)
+Motor.turnToPos(Constant.MOTOR_1_JOINT, 3000)
+Motor.turnToPos(Constant.MOTOR_2_JOINT, 3000)
 
+time.sleep(1)
+position = Motor.readMotorPosition()
 
-def readMotorPosition(motorId):
-    sendIntToArduino(50000 + motorId)
-    position = receiveIntFromArduino
-    while position < 0 or position > 4092:
-        position = receiveIntFromArduino
-    return position
+print(position[0])
+print(position[1])
 
-
-# Main start here
-
-motor1_Id = 1
-motor2_Id = 2
-motor3_Id = 3
-
-rotationMax = 4085
-rotationMin = 5
-
-beginSignal = 420
-
-joy = xbox.Joystick()
-
-chekBegin(beginSignal)
-
-while not joy.X():
-    if joy.A() and not joy.Y():
-        sendIntToArduino(30001)
-        print("A pressed")
-    elif not joy.A() and joy.Y():
-        sendIntToArduino(30000)
-        print("Y pressed")
-    else:
-        sendIntToArduino(0)
-        print("A/Y released")
-    time.sleep(0.1)
-
-print("X pressed")
-
-joy.close()
-
-
-
-
+PositionFileManager.saveNewPosition("HOME", position[0], position[1], dict , Constant.POS_FILE_PATH)
 
 

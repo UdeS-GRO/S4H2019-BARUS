@@ -11,51 +11,53 @@ Motor::Motor(uint32_t Baudrate, const char* DeviceName, uint8_t ID , uint16_t mo
   motorID = ID;
   baudrate = Baudrate;
   deviceName = DeviceName;
-  
+ 
   motor.init(deviceName, baudrate);
+  
   motor.ping(motorID, &model_number);
-}
 
-
-bool Motor::initJointMode(){
-  return motor.jointMode(motorID);
 }
 
 bool Motor::initWheelMode(){
   return motor.wheelMode(motorID);
 }
 
+bool Motor::initMultiTurnMode(){
+  
+  bool isOk = false;
+  if(getOperatingMode() != 4){
+
+    motor.torqueOff(motorID);
+    isOk = motor.setExtendedPositionControlMode(motorID);
+    motor.torqueOn(motorID);
+  }
+    return isOk;
+}
+
 bool Motor::homing()
 {
-  initJointMode();
-  return motor.goalPosition(motorID, homePosition);
+  initMultiTurnMode();
+  return goToPosition(homePosition);
 }
 
-/*void Motor::motorTurnLeft(int32_t goalPosition )
-{
-  //result = motor.setReverseDirection(motorID);
-  motor.goalPosition(motorID, goalPosition);
+int32_t Motor::getOperatingMode(){
+  int32_t mode;
+  motor.readRegister(motorID,"Operating Mode", &mode);
+  
+  return mode;
 }
 
 
-void Motor::motorTurnRight(int32_t goalPosition)
-{
-  //result = motor.setNormalDirection(motorID);
-  motor.goalPosition(motorID, goalPosition);
-}*/
-
-bool Motor::turnToPos(int32_t goalPosition)
-{ 
+bool Motor::goToPosition(int32_t goalPosition){
+  initMultiTurnMode();
+  int32_t currentPos = getCurrentPosition();
   bool isOk = false;
-  if (goalPosition <= maxPos && goalPosition >= minPos)
-  {
-    isOk = true;
-    motor.torqueOff(motorID);                                                   //pervious mouvement are stopped
-    initJointMode();                                                            //TorqueOn() built in -> enable mouvement instruction
-    motor.goalPosition(motorID, goalPosition);
-  }
+  isOk = motor.goalPosition(motorID,goalPosition);
+  while(getCurrentPosition() < (goalPosition - PRECISION_TOL) || getCurrentPosition() > (goalPosition + PRECISION_TOL)){} // wait while it asn't reach the position +/- precision
+
   return isOk;
 }
+
 
 bool Motor::rotate(float rotSpeed){
   bool isOk = false;
@@ -67,7 +69,7 @@ bool Motor::rotate(float rotSpeed){
     motor.getVelocity(motorID, &velocity);                                      //Make sure the motor has stopped  
   }
   while(velocity > 0.1 || velocity < -0.1);
-  
+
   initWheelMode();
   if(rotSpeed >= -MAX_SPEED && rotSpeed <= MAX_SPEED)
   {
@@ -91,24 +93,11 @@ bool Motor::rotate(float rotSpeed){
   return isOk;
 }
 
-int Motor::getCurrentPosition()
-{
+int32_t Motor::getCurrentPosition(){
   int32_t pos = -1;
   motor.getPresentPositionData(motorID, &pos);
   return pos;
 }
-
-/*float Motor::getCurrentRadianPos(uint8_t motorID)
-{
-  bool isRead = false;
-  float pos;
-  isRead = motor.getRadian(motorID, &pos);
-  if(!isRead)
-  {
-    return -1;
-  }
-  return pos; 
-}*/
 
 bool Motor::setHomePos(int pos){
   bool isOk = false;

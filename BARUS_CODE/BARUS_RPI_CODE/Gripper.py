@@ -1,14 +1,13 @@
 import SerialCom
-
-gripperFunctionNB = 1
-openSignal = 1
-closeSignal = 2
+import Constant
 
 
 def closeGripper():
-    SerialCom.sendStructToArduino(gripperFunctionNB, closeSignal)
+    SerialCom.send2IntToArduino(Constant.GRIPPER, Constant.GRIPPER_CLOSE)
 
 
 def openGripper():
-    SerialCom.sendStructToArduino(gripperFunctionNB, openSignal)
+    SerialCom.send2IntToArduino(Constant.GRIPPER, Constant.GRIPPER_OPEN)
+
+
 

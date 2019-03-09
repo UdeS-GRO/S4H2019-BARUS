@@ -8,6 +8,7 @@
 #define MIN_POSITION 5
 #define MAX_POSITION 4085
 #define MAX_SPEED 8.0
+#define PRECISION_TOL 3
 
 class Motor
 {
@@ -18,19 +19,17 @@ class Motor
 //---- METHODS ----//   
     Motor(uint32_t Baudrate, const char* DeviceName, uint8_t ID , uint16_t modelNumber);
 
-    bool initJointMode();
+
     bool initWheelMode();
+    bool initMultiTurnMode();
     bool homing();
+    int32_t getOperatingMode();
     
-    /*void motorTurnLeft(int32_t goalPosition);
-    void motorTurnRight(int32_t goalPosition);*/
-    
-    bool turnToPos(int32_t goalPosition);
+
+    bool goToPosition(int32_t goalPosition);
     bool rotate(float rotSpeed);
     
-    int getCurrentPosition();
-    /*float getCurrentRadianPos(uint8_t motorID);*/
-
+    int32_t getCurrentPosition();
 
     bool setHomePos(int pos = 5);
     int32_t getHomePos();
@@ -48,6 +47,7 @@ class Motor
     const char* deviceName;
     bool isRollingLeft = false;
     bool isRollingRight = false;
+
     
    
     
