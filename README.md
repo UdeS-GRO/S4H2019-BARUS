@@ -24,7 +24,7 @@ Software:
 * SolidWorks 2018
 * Arduino.ide
 * Matlab (to model the robot mathematically)
-* QT
+* wxpython
 
 Library used for the OpenCR board (to use Dynamixel Motors):
 
