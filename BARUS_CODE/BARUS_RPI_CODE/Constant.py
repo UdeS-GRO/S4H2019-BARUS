@@ -1,5 +1,8 @@
 
 #Function numbers to connect in openCr
+CLOCKWISE = 2
+COUNTERCLOCKWISE = 1
+STOP = 0
 GRIPPER = 1
 MOTOR_1_WHEEL = 2
 MOTOR_2_WHEEL= 3
