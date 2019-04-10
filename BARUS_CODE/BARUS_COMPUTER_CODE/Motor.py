@@ -3,10 +3,10 @@ import Constant
 
 
 def turnToPos(commandNb, position):
-    if position >= Constant.POS_MIN:
+    #if position >= Constant.POS_MIN:
         SerialCom.send2IntToArduino(commandNb, position)
-    else:
-        print("Goal position excedes limits")
+    #else:
+        #print("Goal position excedes limits")
 
 
 def rotateClockWise(commandNb):

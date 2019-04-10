@@ -32,6 +32,9 @@
 #define HOME_POSITION_MOTOR1 5
 #define HOME_POSITION_MOTOR2 5
 
+#define TRESHOLD_1 10
+#define TRESHOLD_2 20
+
 //---- Detail Declaration ----//
 
 const uint32_t baudrate = BAUDRATE;
@@ -90,15 +93,19 @@ void setup()
   
   delay(1000);
 
-  //openGripper(&gripperServo);
+  openGripper(&gripperServo);
 }
 
 void loop()
 {
 
 //---- Check communication RPI-OPENCR  ----//
-  checkBegin(&communicationIsOk);
-
+ // checkBegin(&communicationIsOk);
+  int actualPos1 = 0;
+  int posDiff1 = 0;
+  int actualPos2 = 0;
+  int posDiff2 = 0;
+  
   struct Input inputCommand;
   if(readCommandFromRPI(&inputCommand)){
     switch(inputCommand.function)
@@ -114,10 +121,10 @@ void loop()
         
       case MOTOR_1_WHEEL:
         if(!(motor1->isRollingLeft) && inputCommand.parameter == 1){
-          motor1->rotate(3.0);
+          motor1->rotate(2.0);
         }
         else if(!(motor1->isRollingRight) && inputCommand.parameter == 2){
-          motor1->rotate(-3.0);
+          motor1->rotate(-2.0);
         }
         else{
           motor1->rotate(0.0);
@@ -126,10 +133,10 @@ void loop()
       
       case MOTOR_2_WHEEL:
         if(!(motor2->isRollingLeft) && inputCommand.parameter == 1){
-          motor2->rotate(3.0);
+          motor2->rotate(2.0);
         }
         else if(!(motor2->isRollingRight) && inputCommand.parameter == 2){
-          motor2->rotate(-3.0);
+          motor2->rotate(-2.0);
         }
         else{
           motor2->rotate(0.0);
@@ -137,11 +144,36 @@ void loop()
         break;
       
       case MOTOR_1_JOINT:
-        motor1->goToPosition(int32_t(inputCommand.parameter));
+        //motor1->goToPosition(int32_t(inputCommand.parameter));
+          actualPos1 = motor1->getCurrentPosition();
+          posDiff1 = inputCommand.parameter - actualPos1;
+          if (posDiff1 > 0){
+            motor1->rotate(2.0);
+          }
+          else{
+            motor1->rotate(-2.0);
+          }
+          while((actualPos1 < inputCommand.parameter - TRESHOLD_1)||(actualPos1 > inputCommand.parameter + TRESHOLD_1)){
+            actualPos1 = motor1->getCurrentPosition();
+          }
+          motor1->rotate(0.0);
         break;
       
       case MOTOR_2_JOINT:
-        motor2->goToPosition(int32_t(inputCommand.parameter));
+        //motor2->goToPosition(int32_t(inputCommand.parameter));
+          actualPos2 = motor2->getCurrentPosition();
+          posDiff2 = inputCommand.parameter - actualPos2;
+          if (posDiff2 > 0){
+            motor2->rotate(2.0);
+          }
+          else{
+            motor2->rotate(-2.0);
+          }
+          while((actualPos2 < inputCommand.parameter - TRESHOLD_2)||(actualPos2 > inputCommand.parameter + TRESHOLD_2)){
+            actualPos2 = motor2->getCurrentPosition();
+          }
+          motor2->rotate(0.0);
+      
         break;
       
       case MOTOR_1_READ_POS:

@@ -3,8 +3,7 @@ import struct
 import time
 import Constant
 
-ser = serial.Serial('/dev/ttyACM0', 57600)
-
+ser = serial.Serial('COM3', 57600)
 
 def sendIntToArduino(msg):
     ser.write(struct.pack('>h', msg))
@@ -30,7 +29,8 @@ def read2IntFromToArduino():
 def chekBegin(beginSignal):
     echo = -1
     isOk = False
-    sendIntToArduino(beginSignal)
+    for i in range(0,10):
+        sendIntToArduino(beginSignal)
 
     while echo != beginSignal:
         echo = readIntFromArduino()

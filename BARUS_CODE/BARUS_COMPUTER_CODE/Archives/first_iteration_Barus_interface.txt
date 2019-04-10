@@ -1,0 +1,121 @@
+# This is the code for the Barus interface in python.
+# Created by Olivier Girouard, 08/03/2019
+
+# we are using wxPython:
+import wx
+import os
+
+app = wx.App()
+
+curWorkDir = os.getcwd()                    # current working directory
+curWorkDir = curWorkDir.replace("\\", "/")
+
+
+class MainWindow(wx.Frame):
+    def __init__(self, parent, title):
+        wx.Frame.__init__(self, parent, title=title, size=(1280,720), style = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX |
+                                               wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN)
+
+        self.Center()
+
+        panel = wx.Panel(self)
+
+        # Text
+        text1 = wx.StaticText(panel, -1, "Welcome to the Barus interface!", (350, 150))
+        font1 = wx.Font(30, wx.DECORATIVE, wx.ITALIC, wx.NORMAL)
+        font2 = wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+        text1.SetFont(font1)
+
+        # pictures
+        picture1=wx.StaticBitmap(panel)
+        picture1.SetBitmap(wx.Bitmap(curWorkDir + "/pictures/udes-logo.png"))
+
+
+        # Buttons
+        self.BtnManualCtrl = wx.Button(panel, label="Manual control of Barus", pos=(340, 500), size=(200, 50))
+        self.BtnOrderDrink = wx.Button(panel, label="Order a drink", pos=(720, 500), size=(200, 50))
+        self.BtnManualCtrl.SetFont(font2)
+        self.BtnOrderDrink.SetFont(font2)
+
+        # Setting up the menu.
+        windowMenu= wx.Menu()
+        menuAbout = windowMenu.Append(wx.ID_ABOUT, "&About"," Information about this program")
+        menuExit = windowMenu.Append(wx.ID_EXIT,"&Exit"," Terminate the program")
+
+        # Creating the menubar.
+        menuBar = wx.MenuBar()
+        menuBar.Append(windowMenu,"&File")
+        self.SetMenuBar(menuBar)                       # Adding the MenuBar to the window
+        self.Show(True)
+
+        # Set events                                   # We bind objects to an event using Bind()
+        self.Bind(wx.EVT_MENU, self.OnAbout, menuAbout)
+        self.Bind(wx.EVT_MENU, self.OnExit, menuExit)
+        self.BtnManualCtrl.Bind(wx.EVT_BUTTON, self.openManualCtrl)
+        self.BtnOrderDrink.Bind(wx.EVT_BUTTON, self.OpenOrderADrink)
+
+    # methods for buttons:
+    def OnAbout(self, event):
+        # A message dialog box with an OK button. wx.OK is a standard ID in wxWidgets.
+        dlg = wx.MessageDialog( self, "This is the Barus Interface\n\nLast update: 08/03/2019",
+                                        "About this application", wx.ICON_NONE)
+
+        dlg.ShowModal()   # Show it
+        dlg.Destroy()     # finally destroy it when finished.
+
+    def OnExit(self, event):
+        YesNoBox = wx.MessageDialog(self, "You are about to quit\n\n\
+                    Are you sure you want to leave now?", "Before leaving", wx.YES_NO | wx.CANCEL | wx.CANCEL_DEFAULT)
+        answer = YesNoBox.ShowModal()   # Show it
+
+        if answer == wx.ID_YES:
+            self.Close(True)            # Close the frame.
+
+        YesNoBox.Destroy()              # finally destroy it when finished.
+
+    # *********À modifier*******************
+    def openManualCtrl(self, event):
+        print("Button clicked, opening Manual control window")
+
+    # *********À modifier*******************
+    def OpenOrderADrink(self, event):
+        print("Button clicked, opening the window to order a drink")
+
+
+class ManualCtrlFrame(MainWindow):
+
+    def __init__(self, parent, title):
+        wx.Frame.__init__(self, parent, title=title, size=(1280, 720))
+        display = self.Show(False)
+
+
+class OrderADrinkFrame(MainWindow):
+    def __init__(self, parent, title):
+        wx.Frame.__init__(self, parent, title=title, size=(1280, 720))
+
+        self.Center()
+
+        panel = wx.Panel(self)
+
+        # Text
+        text1 = wx.StaticText(panel, -1, "You can choose your drink here!", (350, 150))
+        text2 = wx.StaticText(panel, -1, "Drink #1", (300, 300))
+        text3 = wx.StaticText(panel, -1, "Drink #2", (500, 300))
+        text4 = wx.StaticText(panel, -1, "Drink #3", (700, 300))
+        text5 = wx.StaticText(panel, -1, "Drink #4", (900, 300))
+        font1 = wx.Font(30, wx.DECORATIVE, wx.ITALIC, wx.NORMAL)
+        font2 = wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD)
+        text1.SetFont(font1)
+        text2.SetFont(font2)
+        text3.SetFont(font2)
+        text4.SetFont(font2)
+        text5.SetFont(font2)
+
+        self.Show()
+
+
+mainWindow = MainWindow(None, "Main window (HOME)")
+manualCtrlFrame = ManualCtrlFrame(mainWindow, "Manual control of Barus")
+orderADrinkFrame = OrderADrinkFrame(mainWindow, "Window to order a drink")
+
+app.MainLoop()

@@ -1,3 +1,4 @@
+import os
 
 #Function numbers to connect in openCr
 CLOCKWISE = 2
@@ -12,6 +13,11 @@ MOTOR_1_READ_POS= 6
 MOTOR_2_READ_POS= 7
 HOME= 8
 NOTHING= 9
+WAIT = 1.5
+WAIT_SHOT = 5
+DEF_HEIGHT = 2100
+POUR_1OZ = 7
+POUR_2OZ = 10
 
 GRIPPER_OPEN = 1
 GRIPPER_CLOSE = 2
@@ -21,7 +27,10 @@ MOTOR2_ID = 2
 
 POS_MIN = 5
 
-POS_FILE_PATH = "/home/pi/Desktop/PositionFile"
+
+curWorkDir = os.getcwd()                    # current working directory
+curWorkDir = curWorkDir.replace("\\", "/")
+POS_FILE_PATH = curWorkDir + "/PositionFile.txt"
 
 BEGIN_SIGNAL = 420
 
