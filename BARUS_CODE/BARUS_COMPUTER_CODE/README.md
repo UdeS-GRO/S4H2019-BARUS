@@ -14,5 +14,4 @@ SaveRecipe.py: Contains the function to create a new recipe file
 
 SerialCom.py: Contains all the functions to communicate with the Open CR
 
-
-
+AutomatedTests.py: Contains automated tests.
